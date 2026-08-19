@@ -22,17 +22,17 @@ This report contains two VHDL implementations of the requirement, and two succes
 
 | File | Description |
 |---|---|
-| [`moduloaddern.vhd`](source/moduloaddern.vhd) | First implementation — top-level modulo N adder (arbitrary-moduli method) |
-| [`FA.vhd`](source/FA.vhd) | 1-bit full adder |
-| [`FA_n.vhd`](source/FA_n.vhd) | N-bit ripple-carry adder built from `FA` |
-| [`mux2to1.vhd`](source/mux2to1.vhd) | 2-to-1 multiplexer |
-| [`PU_n.vhd`](source/PU_n.vhd) | Processing unit (conditional subtractor) used by the second implementation |
-| [`mod_n_adder.vhd`](source/mod_n_adder.vhd) | Second implementation — division-based modulo N adder core |
-| [`QD.vhd`](source/QD.vhd) | Input/output register (D flip-flop bank with reset) |
-| [`top.vhd`](source/top.vhd) | Top module — wraps `mod_n_adder` with `QD` input/output registers |
-| [`tb.v`](source/tb.v) | Verilog testbench used for XCelium simulation |
-| [`runproject.tcl`](tcl/runproject.tcl) | Genus synthesis script — 45nm library |
-| [`runproject_7nm.tcl`](tcl/runproject_7nm.tcl) | Genus synthesis script — 7nm library |
+| [`moduloaddern.vhd`](implementationA/moduloaddern.vhd) | First implementation — top-level modulo N adder (arbitrary-moduli method) |
+| [`FA.vhd`](implementationB-GENERIC/FA.vhd) | 1-bit full adder |
+| [`FA_n.vhd`](implementationB-GENERIC/FA_n.vhd) | N-bit ripple-carry adder built from `FA` |
+| [`mux2to1.vhd`](implementationB-GENERIC/mux2to1.vhd) | 2-to-1 multiplexer |
+| [`PU_n.vhd`](implementationB-GENERIC/PU_n.vhd) | Processing unit (conditional subtractor) used by the second implementation |
+| [`mod_n_adder.vhd`](implementationB-GENERIC/mod_n_adder.vhd) | Second implementation — division-based modulo N adder core |
+| [`QD.vhd`](implementationB-GENERIC/QD.vhd) | Input/output register (D flip-flop bank with reset) |
+| [`top.vhd`](implementationB-GENERIC/top.vhd) | Top module — wraps `mod_n_adder` with `QD` input/output registers |
+| [`tb.v`](implementationB-GENERIC/tb.v) | Verilog testbench used for XCelium simulation |
+| [`runproject.tcl`](implementationB-GENERIC/runproject.tcl) | Genus synthesis script — 45nm library |
+| [`runproject_7nm.tcl`](implementationB-GENERIC/runproject_7nm.tcl) | Genus synthesis script — 7nm library |
 
 ## First implementation
 
@@ -44,7 +44,7 @@ $$(A + B)\bmod M = \begin{cases} A + B, & \text{if } A + B + 2^{N} - M < 2^{N} \
 
 Based on this, we designed the VHDL file [`moduloaddern.vhd`](moduloaddern.vhd).
 
-The circuit uses the well-known QD module for the input/output registers ([`QD.vhd`](QD.vhd)), and for the addition, the ripple-carry adder modules we designed ([`FA.vhd`](FA.vhd), [`FA_n.vhd`](FA_n.vhd)).
+The circuit uses the well-known QD module for the input/output registers ([`QD.vhd`](implementationB-GENERIC/QD.vhd)), and for the addition, the ripple-carry adder modules we designed ([`FA.vhd`](implementationB-GENERIC/FA.vhd), [`FA_n.vhd`](implementationB-GENERIC/FA_n.vhd)).
 
 First, using the `math_real` library, we define the inputs/output to have the minimum number of bits needed to represent a given modulus. That is, for mod15, the inputs and output are 4 bits. We then add the two inputs and drive the sum, together with `Cout`, into a signal `path1`. Next we add to it the correction factor `CORR` (`2^N - M`), after converting it to binary, and drive it into signal `path2`. The carry-out of this second addition is unused, so we discard it. The MSB of `path2` tells us whether the result has exceeded `2^N`. We feed `path1` and `path2` into a multiplexer selected by the MSB of `path2`, so that we get the correct output as defined by the formula above. The multiplexer output is the circuit output.
 
@@ -67,14 +67,14 @@ The second implementation we chose is based on binary long division, taking the 
 ![Example of a mod 15 architecture with a 4-bit input and divisor](images/mod15_architecture_example.png)
 *Example of a mod 15 architecture with a 4-bit input and divisor*
 
-The building blocks are [`mux2to1.vhd`](mux2to1.vhd), a 2-to-1 multiplexer, and [`PU_n.vhd`](PU_n.vhd), the processing unit built from `FA_n` and `mux2to1`.
+The building blocks are [`mux2to1.vhd`](implementationB-GENERIC/mux2to1.vhd), a 2-to-1 multiplexer, and [`PU_n.vhd`](implementationB-GENERIC/PU_n.vhd), the processing unit built from `FA_n` and `mux2to1`.
 
 In `PU`, we feed in n bits from `ab` and subtract `d`. If the result is smaller than `d`, `PU` returns the original digits; otherwise, it returns the subtraction result. To decide which of the two `PU` outputs, we use the overflow bit as the select signal of the 2-to-1 mux.
 
 ![PU circuit](images/pu_circuit.png)
 *PU circuit*
 
-These blocks are combined in [`mod_n_adder.vhd`](mod_n_adder.vhd):
+These blocks are combined in [`mod_n_adder.vhd`](implementationB-GENERIC/mod_n_adder.vhd):
 
 - In `loop1`, we put the correct number of leading zeros at the start of `ab`.
 - In `loop2`, we place the digits of `ab`, in order, at the LSB of each block.
@@ -88,9 +88,9 @@ For correct subtraction we need m+1 digits, since a number with a "1" in the (m+
 ![Explanatory diagram for the n mod adder, with n=6 and m=3](images/mod_n_adder_n6_m3.png)
 *Explanatory diagram for the n mod adder, with n=6 and m=3*
 
-Naturally, our circuit also has input and output registers, identical to the ones used in the lab exercises ([`QD.vhd`](QD.vhd)).
+Naturally, our circuit also has input and output registers, identical to the ones used in the lab exercises ([`QD.vhd`](implementationB-GENERIC/QD.vhd)).
 
-Finally, to include the QD registers in the circuit, we built a top module ([`top.vhd`](top.vhd)) that is nothing more than a `mod_n_adder` unit surrounded by QD units at the input and output.
+Finally, to include the QD registers in the circuit, we built a top module ([`top.vhd`](implementationB-GENERIC/top.vhd)) that is nothing more than a `mod_n_adder` unit surrounded by QD units at the input and output.
 
 As shown in `top.vhd`, although the `mod_n_adder` module defines the modulus as a binary value, in the `top` module we define it as an integer generic. This lets us change N in the mod N adder simply by changing a number. The method we used, of course, relies on the non-synthesizable `math_real` library to convert the integer N into a binary input for `mod_n_adder`. We work around this with a single line in the `.tcl` file used for synthesis, described below.
 
@@ -102,9 +102,9 @@ We considered this implementation — specifically the mod15 adder (N=15) — th
 
 This is where we ran into the project's first "difficulty": the `math_real` library is not synthesizable. It turns out, however, that a single command in the tcl file lets us get past this, by forcing the tool to evaluate the mathematical expressions before the elaboration stage.
 
-The tcl file we used is [`runproject.tcl`](runproject.tcl).
+The tcl file we used is [`runproject.tcl`](implementationB-GENERIC/runproject.tcl).
 
-We synthesized the design with Genus (`genus -f runproject.tcl`) across four configurations — two clock periods (10 ns, a relaxed target, and 4 ns, the fastest period we could reliably push through Innovus) on both a 45nm and a 7nm library ([`runproject_7nm.tcl`](runproject_7nm.tcl) for the 7nm runs):
+We synthesized the design with Genus (`genus -f runproject.tcl`) across four configurations — two clock periods (10 ns, a relaxed target, and 4 ns, the fastest period we could reliably push through Innovus) on both a 45nm and a 7nm library ([`runproject_7nm.tcl`](implementationB-GENERIC/runproject_7nm.tcl) for the 7nm runs):
 
 | Configuration | Timing slack | Total power | Total area (cell area units) |
 |---|---|---|---|
@@ -139,7 +139,7 @@ The Logic Equivalence Check returned **PASS** for both implementations, at 10 ns
 
 At this stage we wrote a Verilog testbench, as in the lab exercises, to run in the XCelium tool. This lets us confirm correct operation with known inputs and expected outputs.
 
-Our testbench is [`tb.v`](tb.v). It applies a 50 ns clock and, after reset, drives five pairs of test inputs through the design, leaving enough time between each pair for the output to settle through the input/output registers.
+Our testbench is [`tb.v`](implementationB-GENERIC/tb.v). It applies a 50 ns clock and, after reset, drives five pairs of test inputs through the design, leaving enough time between each pair for the output to settle through the input/output registers.
 
 ![Xcelium simulation waveform](images/xcelium_waveform.png)
 
