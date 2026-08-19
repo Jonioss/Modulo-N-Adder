@@ -22,7 +22,7 @@ This report contains two VHDL implementations of the requirement, and two succes
 
 | File | Description |
 |---|---|
-| [`moduloaddern.vhd`](implementationA/moduloaddern.vhd) | First implementation — top-level modulo N adder (arbitrary-moduli method) |
+| [`moduloaddern.vhd`](implementationA/moduloadderN.vhd) | First implementation — top-level modulo N adder (arbitrary-moduli method) |
 | [`FA.vhd`](implementationB-GENERIC/FA.vhd) | 1-bit full adder |
 | [`FA_n.vhd`](implementationB-GENERIC/FA_n.vhd) | N-bit ripple-carry adder built from `FA` |
 | [`mux2to1.vhd`](implementationB-GENERIC/mux2to1.vhd) | 2-to-1 multiplexer |
@@ -42,7 +42,7 @@ In the paper, the authors mathematically prove the formula below:
 
 $$(A + B)\bmod M = \begin{cases} A + B, & \text{if } A + B + 2^{N} - M < 2^{N} \\ A + B + 2^{N} - M, & \text{otherwise} \end{cases}$$
 
-Based on this, we designed the VHDL file [`moduloaddern.vhd`](moduloaddern.vhd).
+Based on this, we designed the VHDL file [`moduloaddern.vhd`](moduloadderN.vhd).
 
 The circuit uses the well-known QD module for the input/output registers ([`QD.vhd`](implementationB-GENERIC/QD.vhd)), and for the addition, the ripple-carry adder modules we designed ([`FA.vhd`](implementationB-GENERIC/FA.vhd), [`FA_n.vhd`](implementationB-GENERIC/FA_n.vhd)).
 
