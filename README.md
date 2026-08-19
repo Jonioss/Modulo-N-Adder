@@ -1,9 +1,5 @@
 # Modulo N Adder
 
-**Group 10**
-Ioannis-Dionysios Vardakastanis · Efstratios Griparis
-University of Patras, 2026
-
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -26,17 +22,17 @@ This report contains two VHDL implementations of the requirement, and two succes
 
 | File | Description |
 |---|---|
-| [`moduloaddern.vhd`](moduloaddern.vhd) | First implementation — top-level modulo N adder (arbitrary-moduli method) |
-| [`FA.vhd`](FA.vhd) | 1-bit full adder |
-| [`FA_n.vhd`](FA_n.vhd) | N-bit ripple-carry adder built from `FA` |
-| [`mux2to1.vhd`](mux2to1.vhd) | 2-to-1 multiplexer |
-| [`PU_n.vhd`](PU_n.vhd) | Processing unit (conditional subtractor) used by the second implementation |
-| [`mod_n_adder.vhd`](mod_n_adder.vhd) | Second implementation — division-based modulo N adder core |
-| [`QD.vhd`](QD.vhd) | Input/output register (D flip-flop bank with reset) |
-| [`top.vhd`](top.vhd) | Top module — wraps `mod_n_adder` with `QD` input/output registers |
-| [`tb.v`](tb.v) | Verilog testbench used for XCelium simulation |
-| [`runproject.tcl`](runproject.tcl) | Genus synthesis script — 45nm library |
-| [`runproject_7nm.tcl`](runproject_7nm.tcl) | Genus synthesis script — 7nm library |
+| [`moduloaddern.vhd`](source/moduloaddern.vhd) | First implementation — top-level modulo N adder (arbitrary-moduli method) |
+| [`FA.vhd`](source/FA.vhd) | 1-bit full adder |
+| [`FA_n.vhd`](source/FA_n.vhd) | N-bit ripple-carry adder built from `FA` |
+| [`mux2to1.vhd`](source/mux2to1.vhd) | 2-to-1 multiplexer |
+| [`PU_n.vhd`](source/PU_n.vhd) | Processing unit (conditional subtractor) used by the second implementation |
+| [`mod_n_adder.vhd`](source/mod_n_adder.vhd) | Second implementation — division-based modulo N adder core |
+| [`QD.vhd`](source/QD.vhd) | Input/output register (D flip-flop bank with reset) |
+| [`top.vhd`](source/top.vhd) | Top module — wraps `mod_n_adder` with `QD` input/output registers |
+| [`tb.v`](source/tb.v) | Verilog testbench used for XCelium simulation |
+| [`runproject.tcl`](tcl/runproject.tcl) | Genus synthesis script — 45nm library |
+| [`runproject_7nm.tcl`](tcl/runproject_7nm.tcl) | Genus synthesis script — 7nm library |
 
 ## First implementation
 
