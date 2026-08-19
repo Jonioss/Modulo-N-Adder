@@ -218,7 +218,3 @@ Working on this project gave us more hands-on experience with the tools used in 
 ## Bibliography
 
 [1] T. F. Tay and C.-H. Chang, "A new unified modular adder/subtractor for arbitrary moduli," *2015 IEEE International Symposium on Circuits and Systems (ISCAS)*, Lisbon, Portugal, 2015, pp. 53-56, doi: [10.1109/ISCAS.2015.7168568](https://ieeexplore.ieee.org/document/7168568).
-
-[2] Laboratory notes, Digital Integrated Circuit Design II, 2026.
-
-[3] Lecture notes, Digital Integrated Circuit Design II, 2026.
